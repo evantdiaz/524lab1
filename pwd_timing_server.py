@@ -1,13 +1,13 @@
 from flask import Flask, request
 from flask import Blueprint, render_template
-
+import hashlib
 import csv
 import time
 
 app = Flask(__name__)
 
 
-def create_hash(plain_pw):
+def create_hash(plain_pw): 
     salted = plain_pw + "potato"
     encoded = salted.encode()
     result = hashlib.sha256(encoded)
@@ -21,9 +21,8 @@ def get_hashed_pw_from_db(user):
         reader = csv.DictReader(inf)
         for row in reader:
             if row['username'] == user:
-                return row['password']
+                return create_hash(row['password'])
     return False
-
 
 @app.route("/")
 def hello_world():
@@ -36,6 +35,8 @@ def login_post():
     password = request.form.get('password')
     attempted_hash = create_hash(password)
     hashed_pw = get_hashed_pw_from_db(user)
+    print(hashed_pw)
+    print(attempted_hash)
     if hashed_pw and hashed_pw == attempted_hash:
     	return get_secret_code()
     return "Invalid Credentials\n"
