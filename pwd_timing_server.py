@@ -35,8 +35,6 @@ def login_post():
     password = request.form.get('password')
     attempted_hash = create_hash(password)
     hashed_pw = get_hashed_pw_from_db(user)
-    print(hashed_pw)
-    print(attempted_hash)
     if hashed_pw and hashed_pw == attempted_hash:
     	return get_secret_code()
     return "Invalid Credentials\n"
